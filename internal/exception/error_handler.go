@@ -9,7 +9,14 @@ func (h *ErrorHandler) Error() string {
 	return h.Message
 }
 
-func ValidationError(message string) *ErrorHandler {
+func ConflictError(message string) *ErrorHandler {
+	return &ErrorHandler{
+		Code:    409,
+		Message: message,
+	}
+}
+
+func BadRequestError(message string) *ErrorHandler {
 	return &ErrorHandler{
 		Code:    400,
 		Message: message,

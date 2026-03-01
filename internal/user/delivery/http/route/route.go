@@ -10,5 +10,6 @@ func SetupUserRoutes(r *gin.Engine, h *http.UserHandlerImpl) {
 	api := r.Group("/api/v1")
 	{
 		api.GET("/profile", h.GetProfile)
+		api.POST("/register", h.Register)
 	}
 }

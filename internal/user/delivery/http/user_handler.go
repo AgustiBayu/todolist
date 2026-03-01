@@ -25,3 +25,17 @@ func (h *UserHandlerImpl) GetProfile(c *gin.Context) {
 	}
 	helper.NewHandleSuccess(c, response)
 }
+
+func (h *UserHandlerImpl) Register(c *gin.Context) {
+	var req domain.UserRegisterRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		helper.NewHandleError(c, err)
+		return
+	}
+	err := h.UserUsecase.Register(c.Request.Context(), req)
+	if err != nil {
+		helper.NewHandleError(c, err)
+		return
+	}
+	helper.NewHandleSuccess(c, "Register success!")
+}
