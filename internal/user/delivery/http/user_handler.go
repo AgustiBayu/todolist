@@ -32,10 +32,29 @@ func (h *UserHandlerImpl) Register(c *gin.Context) {
 		helper.NewHandleError(c, err)
 		return
 	}
-	err := h.UserUsecase.Register(c.Request.Context(), req)
+	err := h.UserUsecase.Register(c.Request.Context(), &req)
 	if err != nil {
 		helper.NewHandleError(c, err)
 		return
 	}
 	helper.NewHandleSuccess(c, "Register success!")
+}
+
+func (h *UserHandlerImpl) Login(c *gin.Context) {
+	var req domain.UserLoginRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		helper.NewHandleError(c, err)
+		return
+	}
+	userResponse, err := h.UserUsecase.Login(c.Request.Context(), &req)
+	if err != nil {
+		helper.NewHandleError(c, err)
+		return
+	}
+	token, err := helper.GenereteToken(userResponse.ID)
+	if err != nil {
+		helper.NewHandleError(c, err)
+		return
+	}
+	helper.NewHandleLoginSuccess(c, userResponse, token)
 }

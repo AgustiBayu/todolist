@@ -28,3 +28,15 @@ func NewHandleSuccess(c *gin.Context, data interface{}) {
 		Data:    data,
 	})
 }
+
+func NewHandleLoginSuccess(c *gin.Context, data interface{}, token ...string) {
+	if len(token) > 0 && token[0] != "" {
+		c.Header("Authorization", "Bearer "+token[0])
+		c.Header("Access-Control-Expose-Headers", "Authorization") //member aksi akses
+	}
+	c.JSON(http.StatusOK, domain.WebResponse{
+		Code:    http.StatusOK,
+		Message: http.StatusText(http.StatusOK),
+		Data:    data,
+	})
+}

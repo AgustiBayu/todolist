@@ -18,7 +18,7 @@ func NewUserUsecase(userRepo domain.UserRepository) domain.UserUsecase {
 	}
 }
 
-func (u *UserUsecaseImpl) Register(ctx context.Context, req domain.UserRegisterRequest) error {
+func (u *UserUsecaseImpl) Register(ctx context.Context, req *domain.UserRegisterRequest) error {
 	if req.Password != req.ConfrimPassword {
 		return exception.BadRequestError("password and confrim password do not match")
 	}
@@ -45,16 +45,27 @@ func (u *UserUsecaseImpl) Register(ctx context.Context, req domain.UserRegisterR
 	return nil
 }
 
-// func (u *UserUsecaseImpl) Login(ctx context.Context, req domain.UserLoginRequest) (domain.UserResponse, error) {
+func (u *UserUsecaseImpl) Login(ctx context.Context, req *domain.UserLoginRequest) (domain.UserResponse, error) {
+	user, err := u.userRepo.FindByEmail(ctx, req.Email)
+	if err != nil {
+		return domain.UserResponse{}, exception.InternalServerError("database connection error")
+	}
+	if user == nil {
+		return domain.UserResponse{}, exception.NotFoundError("email no register")
+	}
+	if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(req.Password)); err != nil {
+		return domain.UserResponse{}, exception.UnauthorizedErr("invalid email or pass")
+	}
+	return domain.ToUserResponse(user), nil
+}
 
-// }
 // func (u *UserUsecaseImpl) GetProfileById(ctx context.Context, userID int) (domain.UserResponse, error) {
 // 	user, err := u.userRepo.ReadById(ctx, userID)
 // 	if err != nil {
 // 		return domain.UserResponse{}, exception.InternalServerError("failed fetch data users: " + err.Error())
 // 	}
 // 	if user == nil {
-// 		return domain.UserResponse{}, exception.NotFound("user not found")
+// 		return domain.UserResponse{}, exception.NotFoundError("user not found")
 // 	}
 // 	return domain.ToUserResponse(*user), nil
 // }

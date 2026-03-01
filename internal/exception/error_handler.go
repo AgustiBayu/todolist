@@ -9,6 +9,13 @@ func (h *ErrorHandler) Error() string {
 	return h.Message
 }
 
+func UnauthorizedErr(message string) *ErrorHandler {
+	return &ErrorHandler{
+		Code:    401,
+		Message: message,
+	}
+}
+
 func ConflictError(message string) *ErrorHandler {
 	return &ErrorHandler{
 		Code:    409,

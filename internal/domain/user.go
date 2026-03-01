@@ -12,12 +12,12 @@ type User struct {
 func ToUserResponses(user []User) []UserResponse {
 	var responses []UserResponse
 	for _, u := range user {
-		responses = append(responses, ToUserResponse(u))
+		responses = append(responses, ToUserResponse(&u))
 	}
 	return responses
 }
 
-func ToUserResponse(user User) UserResponse {
+func ToUserResponse(user *User) UserResponse {
 	return UserResponse{
 		ID:    user.ID,
 		Name:  user.Name,
@@ -44,8 +44,8 @@ type UserRegisterRequest struct {
 }
 
 type UserUsecase interface {
-	Register(ctx context.Context, req UserRegisterRequest) error
-	// Login(ctx context.Context, req UserLoginRequest) (UserResponse, error)
+	Register(ctx context.Context, req *UserRegisterRequest) error
+	Login(ctx context.Context, req *UserLoginRequest) (UserResponse, error)
 	// GetProfileById(ctx context.Context, userID int) (UserResponse, error)
 	GetProfile(ctx context.Context) ([]UserResponse, error)
 }

@@ -164,9 +164,9 @@ func (r *UserRepositoryImpl) FindByEmail(ctx context.Context, email string) (*do
 			return user, nil
 		}
 	}
-	SQL := `SELECT id, name, email FROM users WHERE email = $1 LIMIT 1`
+	SQL := `SELECT id, name, email,password FROM users WHERE email = $1 LIMIT 1`
 	var model UserModel
-	if err := r.DB.QueryRowContext(ctx, SQL, email).Scan(&model.ID, &model.Name, &model.Email); err != nil {
+	if err := r.DB.QueryRowContext(ctx, SQL, email).Scan(&model.ID, &model.Name, &model.Email, &model.Password); err != nil {
 		if err == sql.ErrNoRows {
 			return nil, nil
 		}
