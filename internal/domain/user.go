@@ -46,7 +46,7 @@ type UserRegisterRequest struct {
 type UserUsecase interface {
 	Register(ctx context.Context, req *UserRegisterRequest) error
 	Login(ctx context.Context, req *UserLoginRequest) (UserResponse, error)
-	// GetProfileById(ctx context.Context, userID int) (UserResponse, error)
+	GetProfileById(ctx context.Context, userID int) (UserResponse, error)
 	GetProfile(ctx context.Context) ([]UserResponse, error)
 	LoginOrRegisterOAuth(ctx context.Context, email, name string) (UserResponse, error)
 }

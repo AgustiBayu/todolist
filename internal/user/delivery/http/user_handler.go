@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 	"os"
+	"strconv"
 	"todolist/internal/domain"
 	"todolist/internal/helper"
 
@@ -97,6 +98,16 @@ func (h *UserHandlerImpl) GetProfile(c *gin.Context) {
 		return
 	}
 	helper.NewHandleSuccess(c, response)
+}
+
+func (h *UserHandlerImpl) GetProfileById(c *gin.Context) {
+	idParam := c.Param("id")
+	userID, _ := strconv.Atoi(idParam)
+	userResponse, err := h.UserUsecase.GetProfileById(c.Request.Context(), userID)
+	if err != nil {
+		helper.NewHandleError(c, err)
+	}
+	helper.NewHandleSuccess(c, userResponse)
 }
 
 func (h *UserHandlerImpl) Register(c *gin.Context) {

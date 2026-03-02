@@ -59,16 +59,16 @@ func (u *UserUsecaseImpl) Login(ctx context.Context, req *domain.UserLoginReques
 	return domain.ToUserResponse(user), nil
 }
 
-// func (u *UserUsecaseImpl) GetProfileById(ctx context.Context, userID int) (domain.UserResponse, error) {
-// 	user, err := u.userRepo.ReadById(ctx, userID)
-// 	if err != nil {
-// 		return domain.UserResponse{}, exception.InternalServerError("failed fetch data users: " + err.Error())
-// 	}
-// 	if user == nil {
-// 		return domain.UserResponse{}, exception.NotFoundError("user not found")
-// 	}
-// 	return domain.ToUserResponse(*user), nil
-// }
+func (u *UserUsecaseImpl) GetProfileById(ctx context.Context, userID int) (domain.UserResponse, error) {
+	user, err := u.userRepo.ReadById(ctx, userID)
+	if err != nil {
+		return domain.UserResponse{}, exception.InternalServerError("failed fetch data users: " + err.Error())
+	}
+	if user == nil {
+		return domain.UserResponse{}, exception.NotFoundError("user not found")
+	}
+	return domain.ToUserResponse(user), nil
+}
 
 func (u *UserUsecaseImpl) GetProfile(ctx context.Context) ([]domain.UserResponse, error) {
 	users, err := u.userRepo.ReadByAll(ctx)
