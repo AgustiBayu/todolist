@@ -80,3 +80,22 @@ func (u *UserUsecaseImpl) GetProfile(ctx context.Context) ([]domain.UserResponse
 	}
 	return domain.ToUserResponses(users), nil
 }
+
+func (u *UserUsecaseImpl) LoginOrRegisterOAuth(ctx context.Context, email, name string) (domain.UserResponse, error) {
+	user, err := u.userRepo.FindByEmail(ctx, email)
+	if err != nil {
+		return domain.UserResponse{}, exception.InternalServerError("database connection error")
+	}
+	if user == nil {
+		newUser := domain.User{
+			Name:     name,
+			Email:    email,
+			Password: "OAUTH_USER_GITHUB",
+		}
+		if err := u.userRepo.Create(ctx, &newUser); err != nil {
+			return domain.UserResponse{}, exception.InternalServerError("database connection error")
+		}
+		user, _ = u.userRepo.FindByEmail(ctx, email)
+	}
+	return domain.ToUserResponse(user), nil
+}

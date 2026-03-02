@@ -11,7 +11,9 @@ func SetupUserRoutes(r *gin.Engine, h *http.UserHandlerImpl) {
 	api := r.Group("/api/v1")
 	{
 		api.POST("/register", h.Register)
-		api.POST("/login", h.Login)
+		api.POST("/login", h.Login)		
+		api.GET("/auth/github/login", h.GithubLogin)
+		api.GET("/auth/github/callback", h.GithubCallback)
 		api.GET("/profile", middleware.JWTMiddleware(), h.GetProfile)
 	}
 }

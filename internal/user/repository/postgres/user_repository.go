@@ -31,7 +31,7 @@ func (r *UserRepositoryImpl) Create(ctx context.Context, user *domain.User) erro
 	}
 	defer tx.Rollback()
 	var lastInsertId int
-	SQL := `INSERT INTO users(name,email,password,created_at)VALUES($1,$2,$3,now()) RETURNING id`
+	SQL := `INSERT INTO users(name,email,password,created_at,updated_at)VALUES($1,$2,$3,now(),now()) RETURNING id`
 	if err := tx.QueryRowContext(ctx, SQL, user.Name, user.Email, user.Password).Scan(&lastInsertId); err != nil {
 		return err
 	}
@@ -72,8 +72,8 @@ func (r *UserRepositoryImpl) ReadById(ctx context.Context, userID int) (*domain.
 	return userModel, nil
 }
 func (r *UserRepositoryImpl) ReadByAll(ctx context.Context) ([]domain.User, error) {
-	cachaKey := fmt.Sprint("users::all")
-	val, err := r.Redis.Get(ctx, cachaKey).Result()
+	cacheKey := fmt.Sprint("users::all")
+	val, err := r.Redis.Get(ctx, cacheKey).Result()
 	if err == nil {
 		var users []domain.User
 		if err := json.Unmarshal([]byte(val), &users); err == nil {
@@ -98,7 +98,7 @@ func (r *UserRepositoryImpl) ReadByAll(ctx context.Context) ([]domain.User, erro
 	if errModel != nil {
 		return nil, errModel
 	}
-	r.Redis.Set(ctx, cachaKey, jsonData, 15*time.Minute)
+	r.Redis.Set(ctx, cacheKey, jsonData, 15*time.Minute)
 	return users, nil
 }
 
